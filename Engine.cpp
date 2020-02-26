@@ -40,9 +40,7 @@ MainScreen* Engine::GetMainScreen()
 
 int Engine::GetTotalPlayers()
 {
-	//Todo fix 
-	return 3;
-	//return *reinterpret_cast<int*>(base + Offsets::totalPlayers);
+	return *reinterpret_cast<int32_t*>(base + Offsets::totalPlayers);
 }
 
 PlayerArray* Engine::GetPlayerArray()
@@ -62,33 +60,12 @@ PlayerArray* Engine::GetPlayerArray()
 	return world->pPlayerArray;
 }
 
-
-//Vector2 Engine::worldToScreen(Vector3 position)
-//{
-//	MainScreen* mainScreen = GetMainScreen();
-//	int tile_width = 96 * mainScreen->pGameScreen->pMainView->ScreenPosZ;
-//	int tile_height = 96 * mainScreen->pGameScreen->pMainView->ScreenPosZ;
-//
-//
-//	float xDelta = position.x - mainScreen->pGameScreen->pMainView->ScreenPosX;
-//	float yDelta = position.y - mainScreen->pGameScreen->pMainView->ScreenPosY;
-//
-//	int xResolution = mainScreen->pGameScreen->ScreenResX;
-//	int yResolution = mainScreen->pGameScreen->ScreenResY;
-//
-//	float screenXfinal = ((xDelta + yDelta) / 2) * tile_width + (xResolution / 2);
-//	float screenYfinal = (((xDelta - yDelta) / 2) * tile_height * -1) / 2 + (yResolution / 2);
-//
-//	screenYfinal -= position.z * 96 / 4;
-//
-//	return Vector2((screenXfinal - tile_width / 2), (screenYfinal - tile_height));
-//}
-
 Vector2 Engine::worldToScreen(Vector3 position)
 {
 	MainScreen* mainScreen = GetMainScreen();
-	int tile_width = 96* mainScreen->pGameScreen->pMainView->ScreenPosZ;
-	int tile_height = 96* mainScreen->pGameScreen->pMainView->ScreenPosZ;
+	static int tileSize = GetWorld()->pMap->GetTileSize();
+	int tile_width = tileSize * mainScreen->pGameScreen->pMainView->ScreenPosZ;
+	int tile_height = tileSize * mainScreen->pGameScreen->pMainView->ScreenPosZ;
 	
 
 	float xDelta = position.x - mainScreen->pGameScreen->pMainView->ScreenPosX ;
@@ -100,7 +77,7 @@ Vector2 Engine::worldToScreen(Vector3 position)
 	float screenXfinal = ((xDelta + yDelta) / 2) * tile_width + (xResolution / 2);
 	float screenYfinal = (((xDelta - yDelta) / 2) * tile_height * -1) / 2 + (yResolution / 2);
 
-	screenYfinal -= position.z * 96 * mainScreen->pGameScreen->pMainView->ScreenPosZ / 4;
+	screenYfinal -= position.z * tileSize * mainScreen->pGameScreen->pMainView->ScreenPosZ / 4;
 
 	return Vector2(screenXfinal,screenYfinal);
 }

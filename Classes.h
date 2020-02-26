@@ -130,9 +130,13 @@ public:
 class Map
 {
 public:
-	char pad_0x0000[0x8]; //0x0000
+	int32_t GetTileSize()
+	{
+		static int32_t tileOffset = 0x5B38;
+		return *reinterpret_cast<int32_t*>((int64_t)this + tileOffset);
+	}
 
-}; //Size=0x0008
+}; //Size=0x5CC8
 
 class MainScreen
 {

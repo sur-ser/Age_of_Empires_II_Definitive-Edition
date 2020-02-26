@@ -156,8 +156,10 @@ void Core::OnPresent()
 				if (ImGui::Begin("Age of Empires 2 DE", &openOverlay, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
 				{
 					ImGui::Text("World %p", world);
+					ImGui::Text("Map %p tilesize %d", world->pMap, world->pMap->GetTileSize());
 					ImGui::Text("PlayerArray %p", playerArray);
-					//ImGui::Text("totalPlayers %d", totalPlayers);
+					ImGui::Text("totalPlayers %d", totalPlayers);
+					ImGui::Text("ScreenPos %f %f %f", mainScreen->pGameScreen->pMainView->ScreenPosX, mainScreen->pGameScreen->pMainView->ScreenPosY, mainScreen->pGameScreen->pMainView->ScreenPosZ);
 					for (int i = 0; i < totalPlayers; i++)
 					{
 						createPlayerTreeNode(playerArray->playerData[i].player, i);
