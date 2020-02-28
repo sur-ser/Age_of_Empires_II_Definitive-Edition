@@ -38,48 +38,33 @@ DWORD_PTR* pSwapChainVtable = NULL;
 
 VOID WINAPI OnDllAttach(PVOID base)
 {
+#ifdef DEBUG
 	AllocConsole();
 	freopen_s((FILE**)stdin, "CONIN$", "r", stdin);
 	freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
 	SetConsoleTitleA("Age of Empires 2 DE - BDKPlayer");
+#endif
 }
 
 VOID WINAPI OnDllDetach()
 {
+#ifdef DEBUG
 	fclose((FILE*)stdin);
 	fclose((FILE*)stdout);
 
 	HWND hw_ConsoleHwnd = GetConsoleWindow();
 	FreeConsole();
 	PostMessageW(hw_ConsoleHwnd, WM_CLOSE, 0, 0);
+#endif
 }
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK hWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	ImGuiIO& io = ImGui::GetIO();
-	POINT mPos;
-	GetCursorPos(&mPos);
-	ScreenToClient(window, &mPos);
-	ImGui::GetIO().MousePos.x = mPos.x;
-	ImGui::GetIO().MousePos.y = mPos.y;
-
-	if (uMsg == WM_KEYUP)
-	{
-		if (wParam == VK_INSERT)
-		{
-			if(ShowMenu)
-				io.MouseDrawCursor = true;
-			else
-				io.MouseDrawCursor = false;
-		}
-	}
-
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
 	{
 		return true;
 	}
-
 	return CallWindowProc(OriginalWndProcHandler, hWnd, uMsg, wParam, lParam);
 }
 
@@ -219,7 +204,7 @@ const int MultisampleCount = 1; // Set to 1 to disable multisampling
 LRESULT CALLBACK DXGIMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) { return DefWindowProc(hwnd, uMsg, wParam, lParam); }
 DWORD __stdcall InitHooks(LPVOID hModule)
 {
-	//OnDllAttach(hModule);
+	OnDllAttach(hModule);
 
 	HMODULE hDXGIDLL = 0;
 	do
@@ -331,8 +316,7 @@ BOOL __stdcall DllMain(HINSTANCE hModule, DWORD dwReason, LPVOID lpReserved)
 
 	case DLL_PROCESS_DETACH:
 		Sleep(1000);
-		//OnDllDetach();
-		//Sleep(100);
+		OnDllDetach();
 		break;
 	}
 	return TRUE;
